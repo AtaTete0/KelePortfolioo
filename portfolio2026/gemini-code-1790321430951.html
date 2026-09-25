@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelete-ü Kapfo | AI/ML Developer</title>
+    <!--[cite: 13]-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        pastel: {
+                            pink: '#ffd1dc',
+                            blue: '#a8d8ea',
+                            purple: '#d5c6ff',
+                            yellow: '#ffefb5',
+                            green: '#c6f5d5',
+                            bg: '#f8f4fc'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 12s infinite alternate',
+                        'blob-reverse': 'blob-reverse 15s infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'float-slow': 'float 9s ease-in-out 1s infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'gradient-x': 'gradient-x 5s ease infinite'
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(40px, -60px) scale(1.1)' },
+                            '66%': { transform: 'translate(-30px, 30px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        'blob-reverse': {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(-40px, 60px) scale(1.1)' },
+                            '66%': { transform: 'translate(30px, -30px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8f4fc;
+            overflow-x: hidden;
+            color: #2d3748;
+            cursor: none; 
+        }
+
+        /* Interactive Magic Cursor */
+        #cursor-dot { width: 8px; height: 8px; background-color: #d5c6ff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s; }
+        #cursor-outline { width: 40px; height: 40px; border: 2px solid #ffd1dc; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s; transition-timing-function: ease-out; }
+
+        /* Dynamic Tap Sparkles */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            font-size: 20px;
+            text-shadow: 0 0 8px rgba(255, 209, 220, 0.9);
+            transform-origin: center center;
+        }
+
+        @keyframes sparkle-burst {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+            30% { transform: translate(calc(-50% + var(--tx)*0.5), calc(-50% + var(--ty)*0.5)) scale(1.5) rotate(90deg); opacity: 1; }
+            50% { transform: translate(calc(-50% + var(--tx)*0.7), calc(-50% + var(--ty)*0.7)) scale(0.6) rotate(180deg); opacity: 0.8; }
+            70% { transform: translate(calc(-50% + var(--tx)*0.85), calc(-50% + var(--ty)*0.85)) scale(1.2) rotate(270deg); opacity: 0.9; }
+            100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* Animated Star Background */
+        .star { position: absolute; background-color: white; border-radius: 50%; box-shadow: 0 0 5px white, 0 0 10px white; animation: twinkle linear infinite; z-index: -1; }
+        @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5) translateY(0); } 50% { opacity: 1; transform: scale(1.2) translateY(-20px); } 100% { opacity: 0; transform: scale(0.5) translateY(-40px); } }
+
+        /* 3D Glassmorphism Cards */
+        .glass-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(168, 216, 234, 0.25); border-radius: 24px; transform-style: preserve-3d; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+        .glass-card:hover { box-shadow: 0 20px 50px 0 rgba(255, 209, 220, 0.6); border-color: rgba(255, 209, 220, 0.9); }
+        .pop-out { transform: translateZ(30px); }
+
+        /* Scroll Reveal Utility */
+        .reveal { opacity: 0; transform: translateY(60px) scale(0.95); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* Floating Skills Bubbles */
+        .skill-bubble { background: linear-gradient(135deg, #ffffff 0%, #f8f4fc 100%); border: 2px solid #d5c6ff; box-shadow: 0 4px 15px rgba(213, 198, 255, 0.4); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .skill-bubble:hover { background: #d5c6ff; color: white; transform: scale(1.15) rotate(5deg) translateY(-8px); box-shadow: 0 15px 25px rgba(213, 198, 255, 0.6); }
+
+        /* Typing Effect Cursor */
+        .typing-cursor::after { content: '|'; animation: blink 1s step-start infinite; color: #d5c6ff; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f8f4fc; }
+        ::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8d8ea; }
+        a, button, .cursor-pointer { cursor: none; }
+    </style>
+</head>
+<body class="relative antialiased selection:bg-pastel-pink selection:text-gray-800">
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="hidden md:block"></div>
+    <div id="cursor-outline" class="hidden md:block"></div>
+
+    <!-- Music Player Audio Element -->
+    <audio id="bg-music" loop>
+        <source src="beabadoobee - Glue Song (Official Music Video).mp3" type="audio/mpeg"> <!--[cite: 14]-->
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Player UI Control -->
+    <div id="music-player" class="fixed bottom-6 left-6 z-50 glass-card p-3 flex items-center gap-4 transform transition-transform hover:scale-105 group hidden md:flex interactive cursor-pointer shadow-lg" onclick="toggleMusic()">
+        <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center text-white shadow-inner relative overflow-hidden">
+            <i id="music-icon" class="fa-solid fa-play text-xl relative z-10 pl-1"></i>
+            <div id="music-pulse" class="absolute inset-0 bg-white opacity-0 transition-opacity"></div>
+        </div>
+        <div class="flex flex-col pr-4">
+            <span class="text-sm font-bold text-gray-800">Now Playing</span>
+            <span class="text-xs text-pink-500 font-semibold truncate w-32">glue song - beabadoobee</span> <!--[cite: 14]-->
+        </div>
+        <!-- Close/Hide Player Button -->
+        <button onclick="event.stopPropagation(); document.getElementById('music-player').classList.add('hidden'); document.getElementById('mobile-music-btn').classList.remove('hidden');" class="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 hover:bg-pink-500 text-gray-600 hover:text-white rounded-full flex items-center justify-center text-xs shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 interactive">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Mobile/Minimized Music Toggle -->
+    <button id="mobile-music-btn" onclick="document.getElementById('music-player').classList.remove('hidden'); this.classList.add('hidden');" class="fixed bottom-6 left-6 z-40 w-14 h-14 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-full shadow-lg flex items-center justify-center interactive hover:scale-110 transition-transform md:hidden">
+        <i class="fa-solid fa-music animate-bounce"></i>
+    </button>
+
+    <!-- Dynamic Stars & Floating Space Fillers Container -->
+    <div id="stars-container" class="fixed inset-0 pointer-events-none z-[-1]"></div>
+    
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-30 text-3xl">
+        <i class="fa-solid fa-star absolute top-[15%] left-[5%] text-yellow-400 animate-float"></i>
+        <i class="fa-solid fa-moon absolute top-[45%] left-[10%] text-purple-400 animate-float-delayed"></i>
+        <i class="fa-solid fa-code absolute bottom-[25%] left-[15%] text-blue-400 animate-float-slow"></i>
+        <i class="fa-solid fa-heart absolute top-[25%] right-[8%] text-pink-400 animate-float"></i>
+        <i class="fa-solid fa-camera absolute top-[65%] right-[12%] text-teal-400 animate-float-delayed"></i>
+        <i class="fa-solid fa-compass absolute bottom-[15%] right-[5%] text-indigo-400 animate-float-slow"></i>
+        <i class="fa-solid fa-gamepad absolute top-[10%] right-[35%] text-green-400 animate-float"></i>
+        <i class="fa-solid fa-palette absolute bottom-[40%] right-[30%] text-orange-400 animate-float-delayed"></i>
+    </div>
+
+    <!-- Decorative Blurry Blobs to fill background -->
+    <div class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-pastel-pink rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[40rem] h-[40rem] bg-pastel-blue rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-pastel-purple rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" style="animation-delay: 4s;"></div>
+        <div class="absolute top-[40%] left-[40%] w-[35rem] h-[35rem] bg-pastel-yellow rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob-reverse" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-[10%] right-[10%] w-[30rem] h-[30rem] bg-pastel-green rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob" style="animation-delay: 3s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center bg-white/40 backdrop-blur-md rounded-b-3xl border-b-2 border-white/50 shadow-sm mt-2 mx-4 transition-all duration-300">
+            <a href="#" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 hover:scale-110 transition-transform interactive">
+                K.K <i class="fa-solid fa-paw text-pastel-pink text-lg ml-1"></i>
+            </a>
+            <div class="hidden md:flex gap-5 lg:gap-6 font-bold text-gray-600 text-sm lg:text-base">
+                <a href="#about" class="hover:text-pink-500 transition-colors hover:-translate-y-1 transform interactive">About</a>
+                <a href="#experience" class="hover:text-purple-500 transition-colors hover:-translate-y-1 transform interactive">Experience</a>
+                <a href="#education" class="hover:text-indigo-500 transition-colors hover:-translate-y-1 transform interactive">Education</a>
+                <a href="#projects" class="hover:text-blue-500 transition-colors hover:-translate-y-1 transform interactive">Projects</a>
+                <a href="#certifications" class="hover:text-yellow-500 transition-colors hover:-translate-y-1 transform interactive">Certs</a>
+                <a href="#skills" class="hover:text-green-500 transition-colors hover:-translate-y-1 transform interactive">Skills</a>
+                <a href="#contact" class="hover:text-pink-500 transition-colors hover:-translate-y-1 transform interactive bg-pink-100 px-4 py-1 rounded-full text-pink-500 border border-pink-200">Connect</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pt-32 pb-20">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[80vh] flex flex-col md:flex-row items-center justify-between gap-12 reveal active">
+            <div class="flex-1 space-y-6 z-10">
+                <div class="inline-block px-4 py-2 bg-white/60 backdrop-blur-md rounded-full border-2 border-pastel-blue shadow-sm animate-float">
+                    <span class="text-blue-500 font-bold tracking-wider">✨ Hello, World! I am</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black leading-tight">
+                    <span class="text-gray-800">Kelete-ü</span><br>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 animate-gradient-x">
+                        Kapfo<!--[cite: 1]-->
+                    </span>
+                </h1>
+                <p class="text-2xl md:text-3xl font-bold text-gray-600 flex items-center gap-3 h-10">
+                    <span id="typing-text" class="typing-cursor text-purple-500"></span><!--[cite: 1]-->
+                </p>
+                <div class="flex gap-4 pt-6">
+                    <a href="#contact" class="px-8 py-4 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold rounded-full shadow-[0_10px_20px_rgba(236,72,153,0.3)] hover:shadow-[0_15px_30px_rgba(236,72,153,0.5)] hover:-translate-y-2 transition-all duration-300 interactive">
+                        Let's Connect <i class="fa-solid fa-paper-plane ml-2 animate-bounce-slow"></i>
+                    </a>
+                    <a href="#projects" class="px-8 py-4 bg-white/80 backdrop-blur text-purple-500 font-bold rounded-full shadow-lg border-2 border-purple-100 hover:shadow-purple-200/50 hover:-translate-y-2 transition-all duration-300 interactive">
+                        View Work <i class="fa-solid fa-sparkles ml-2 text-yellow-400"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Graphics (Profile Image) -->
+            <div class="flex-1 relative w-full max-w-lg flex justify-center items-center">
+                <div class="relative w-64 h-64 md:w-80 md:h-80 z-10 group tilt-element cursor-pointer interactive">
+                    <img src="WhatsApp Image 2026-09-24 at 9.37.54 AM.jpeg" alt="Kelete-ü Kapfo" class="w-full h-full object-cover rounded-full border-8 border-white shadow-2xl relative z-20 transition-transform duration-500 pop-out"> <!--[cite: 2]-->
+                    
+                    <div class="absolute inset-[-20px] border-4 border-dashed border-pastel-pink rounded-full animate-spin-slow z-10 opacity-70"></div>
+                    <div class="absolute inset-[-40px] border-4 border-dotted border-pastel-blue rounded-full animate-[spin_20s_linear_infinite_reverse] z-10 opacity-70"></div>
+                </div>
+                
+                <i class="fa-brands fa-python absolute top-10 left-0 text-5xl text-blue-400 animate-float-delayed z-30 drop-shadow-lg"></i>
+                <i class="fa-solid fa-brain absolute bottom-10 right-0 text-5xl text-pink-400 animate-float z-30 drop-shadow-lg"></i>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-12 text-gray-800">
+                <i class="fa-solid fa-user-astronaut text-pastel-purple mr-3 animate-float inline-block"></i>About Me
+            </h2>
+            <div class="glass-card p-8 md:p-14 flex flex-col md:flex-row gap-8 items-center tilt-element">
+                <div class="w-full text-xl text-gray-700 space-y-6 font-medium leading-relaxed text-center md:text-left pop-out">
+                    <p>
+                        I am an <strong class="text-purple-500 bg-purple-100 px-2 py-1 rounded-lg">AI/ML Developer</strong> and Bachelor of Computer Application (BCA) graduate with hands-on experience in artificial intelligence, machine learning, computer vision, and data analysis.<!--[cite: 1]-->
+                    </p>
+                    <p>
+                        I built <strong class="text-pink-500 bg-pink-100 px-2 py-1 rounded-lg">hand2hear</strong>, a real-time gesture-to-speech system, and have contributed to applied AI, web, and Android projects through various internships. My toolkit includes Python, TensorFlow, OpenCV, and MediaPipe.<!--[cite: 1]-->
+                    </p>
+                    <p>
+                        I have a strong interest in responsible data practices and utilizing technology for positive change. When I'm not coding, I'm probably daydreaming about new AI models or admiring cute aesthetics! <i class="fa-solid fa-cat text-pink-400"></i><!--[cite: 1]-->
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-12 text-gray-800">
+                <i class="fa-solid fa-briefcase text-pastel-blue mr-3 animate-bounce-slow inline-block"></i>Experience
+            </h2>
+            <div class="relative">
+                <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-pastel-pink via-pastel-purple to-pastel-blue rounded-full"></div>
+                
+                <div class="space-y-16">
+                    <!-- Exp 1 -->
+                    <div class="relative flex flex-col md:flex-row items-center md:justify-between w-full reveal">
+                        <div class="md:w-5/12 mb-4 md:mb-0 md:text-right">
+                            <div class="glass-card tilt-element p-8 border-l-4 md:border-l-0 md:border-r-4 border-pink-400 hover:bg-white/80">
+                                <div class="pop-out">
+                                    <h3 class="text-2xl font-black text-gray-800">Web Craft<!--[cite: 1]--></h3>
+                                    <h4 class="text-pink-500 font-bold mb-2 text-lg">AI/ML Intern<!--[cite: 1]--></h4>
+                                    <p class="text-sm text-gray-500 mb-4 font-bold bg-gray-100 inline-block px-3 py-1 rounded-full"><i class="fa-regular fa-calendar-alt mr-2"></i>Mar 2026 - Present<!--[cite: 1]--></p>
+                                    <ul class="text-gray-600 text-sm list-disc list-inside space-y-2 text-left md:text-right" dir="ltr">
+                                        <li>Building end-to-end AI deployment pipelines in Python.<!--[cite: 1]--></li>
+                                        <li>Applying model evaluation and performance tuning.<!--[cite: 1]--></li>
+                                        <li>Collaborating with engineering teams to monitor production AI models.<!--[cite: 1]--></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:flex w-12 h-12 absolute left-1/2 transform -translate-x-1/2 bg-white border-4 border-pink-400 rounded-full items-center justify-center z-10 shadow-lg shadow-pink-200">
+                            <i class="fa-solid fa-star text-pink-400 text-sm animate-spin-slow"></i>
+                        </div>
+                        <div class="md:w-5/12 hidden md:block"></div>
+                    </div>
+
+                    <!-- Exp 2 -->
+                    <div class="relative flex flex-col md:flex-row items-center md:justify-between w-full reveal">
+                        <div class="md:w-5/12 hidden md:block"></div>
+                        <div class="hidden md:flex w-12 h-12 absolute left-1/2 transform -translate-x-1/2 bg-white border-4 border-purple-400 rounded-full items-center justify-center z-10 shadow-lg shadow-purple-200">
+                            <i class="fa-solid fa-mobile-screen text-purple-400 text-sm"></i>
+                        </div>
+                        <div class="md:w-5/12 w-full mt-4 md:mt-0">
+                            <div class="glass-card tilt-element p-8 border-l-4 border-purple-400 hover:bg-white/80">
+                                <div class="pop-out">
+                                    <h3 class="text-2xl font-black text-gray-800">Smart Internz<!--[cite: 1]--></h3>
+                                    <h4 class="text-purple-500 font-bold mb-2 text-lg">Android App Dev Intern<!--[cite: 1]--></h4>
+                                    <p class="text-sm text-gray-500 mb-4 font-bold bg-gray-100 inline-block px-3 py-1 rounded-full"><i class="fa-regular fa-calendar-alt mr-2"></i>Jan 2025 - Jul 2025<!--[cite: 1]--></p>
+                                    <ul class="text-gray-600 text-sm list-disc list-inside space-y-2">
+                                        <li>Designed Android app modules using Java (UI layouts, lifecycle).<!--[cite: 1]--></li>
+                                        <li>Built and tested components focusing on responsive design.<!--[cite: 1]--></li>
+                                        <li>Debugged features for stability and cross-device compatibility.<!--[cite: 1]--></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exp 3 -->
+                    <div class="relative flex flex-col md:flex-row items-center md:justify-between w-full reveal">
+                        <div class="md:w-5/12 mb-4 md:mb-0 md:text-right">
+                            <div class="glass-card tilt-element p-8 border-l-4 md:border-l-0 md:border-r-4 border-blue-400 hover:bg-white/80">
+                                <div class="pop-out">
+                                    <h3 class="text-2xl font-black text-gray-800">Codershope<!--[cite: 1]--></h3>
+                                    <h4 class="text-blue-500 font-bold mb-2 text-lg">Web & App Dev Intern<!--[cite: 1]--></h4>
+                                    <p class="text-sm text-gray-500 mb-4 font-bold bg-gray-100 inline-block px-3 py-1 rounded-full"><i class="fa-regular fa-calendar-alt mr-2"></i>Jan 2025<!--[cite: 1]--></p>
+                                    <ul class="text-gray-600 text-sm list-disc list-inside space-y-2 text-left md:text-right" dir="ltr">
+                                        <li>Developed interactive web pages integrating AI-driven features.<!--[cite: 1]--></li>
+                                        <li>Debugged and optimized logic for responsiveness and stability.<!--[cite: 1]--></li>
+                                        <li>Translated requirements into clean maintainable code.<!--[cite: 1]--></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:flex w-12 h-12 absolute left-1/2 transform -translate-x-1/2 bg-white border-4 border-blue-400 rounded-full items-center justify-center z-10 shadow-lg shadow-blue-200">
+                            <i class="fa-solid fa-code text-blue-400 text-sm"></i>
+                        </div>
+                        <div class="md:w-5/12 hidden md:block"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-12 text-gray-800">
+                <i class="fa-solid fa-graduation-cap text-indigo-400 mr-3 animate-float inline-block"></i>Education
+            </h2>
+            <div class="relative max-w-5xl mx-auto">
+                <div class="hidden md:block absolute left-8 transform h-full w-1 bg-gradient-to-b from-indigo-300 to-pink-300 rounded-full"></div>
+                
+                <div class="space-y-8 pl-0 md:pl-16">
+                    <!-- Edu 1 -->
+                    <div class="glass-card tilt-element p-6 flex flex-col md:flex-row items-center md:items-start gap-6 border-l-4 border-indigo-400 group hover:bg-white/90">
+                        <div class="hidden md:flex w-12 h-12 absolute -left-[45px] top-8 bg-white border-4 border-indigo-400 rounded-full items-center justify-center z-10 shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-university text-indigo-400 text-sm"></i>
+                        </div>
+                        <div class="pop-out w-full">
+                            <h3 class="text-2xl font-black text-gray-800">Bachelor of Computer Application (BCA)<!--[cite: 1]--></h3>
+                            <div class="flex flex-wrap items-center justify-between gap-4 mt-1 mb-3">
+                                <h4 class="text-indigo-500 font-bold text-lg">St. Joseph University<!--[cite: 1]--></h4>
+                                <span class="bg-indigo-100 text-indigo-700 font-extrabold px-4 py-1 rounded-full shadow-sm text-sm border border-indigo-200">CGPA: 8.47<!--[cite: 1]--></span>
+                            </div>
+                            <p class="text-sm text-gray-500 font-bold bg-indigo-50 inline-block px-3 py-1 rounded-full mb-3"><i class="fa-regular fa-calendar-alt mr-2"></i>2023 - 2026<!--[cite: 1]--></p>
+                            <p class="text-gray-600 text-sm leading-relaxed">Completed a comprehensive curriculum focusing on programming, database management, and web development. Active participant in technical fests and department competitions.<!--[cite: 1]--></p>
+                        </div>
+                    </div>
+
+                    <!-- Edu 2 -->
+                    <div class="glass-card tilt-element p-6 flex flex-col md:flex-row items-center md:items-start gap-6 border-l-4 border-pink-400 group hover:bg-white/90">
+                        <div class="hidden md:flex w-12 h-12 absolute -left-[45px] top-8 bg-white border-4 border-pink-400 rounded-full items-center justify-center z-10 shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-school text-pink-400 text-sm"></i>
+                        </div>
+                        <div class="pop-out w-full">
+                            <h3 class="text-2xl font-black text-gray-800">HSSLC - Higher Secondary<!--[cite: 1]--></h3>
+                            <div class="flex flex-wrap items-center justify-between gap-4 mt-1 mb-3">
+                                <h4 class="text-pink-500 font-bold text-lg">Greenwood School<!--[cite: 1]--></h4>
+                                <span class="bg-pink-100 text-pink-700 font-extrabold px-4 py-1 rounded-full shadow-sm text-sm border border-pink-200">Score: 74.40%<!--[cite: 1]--></span>
+                            </div>
+                            <p class="text-sm text-gray-500 font-bold bg-pink-50 inline-block px-3 py-1 rounded-full mb-3"><i class="fa-regular fa-calendar-alt mr-2"></i>2021 - 2023<!--[cite: 1]--></p>
+                            <p class="text-gray-600 text-sm leading-relaxed">Built a strong foundational knowledge in analytical subjects, preparing for a higher education transition into computer science and technology.<!--[cite: 1]--></p>
+                        </div>
+                    </div>
+
+                    <!-- Edu 3 -->
+                    <div class="glass-card tilt-element p-6 flex flex-col md:flex-row items-center md:items-start gap-6 border-l-4 border-purple-400 group hover:bg-white/90">
+                        <div class="hidden md:flex w-12 h-12 absolute -left-[45px] top-8 bg-white border-4 border-purple-400 rounded-full items-center justify-center z-10 shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-book-open text-purple-400 text-sm"></i>
+                        </div>
+                        <div class="pop-out w-full">
+                            <h3 class="text-2xl font-black text-gray-800">HSLC - High School<!--[cite: 1]--></h3>
+                            <div class="flex flex-wrap items-center justify-between gap-4 mt-1 mb-3">
+                                <h4 class="text-purple-500 font-bold text-lg">Greenwood School<!--[cite: 1]--></h4>
+                                <span class="bg-purple-100 text-purple-700 font-extrabold px-4 py-1 rounded-full shadow-sm text-sm border border-purple-200">Score: 83.66%<!--[cite: 1]--></span>
+                            </div>
+                            <p class="text-sm text-gray-500 font-bold bg-purple-50 inline-block px-3 py-1 rounded-full mb-3"><i class="fa-regular fa-calendar-alt mr-2"></i>2020 - 2021<!--[cite: 1]--></p>
+                            <p class="text-gray-600 text-sm leading-relaxed">Completed foundational secondary education with strong academic performance, fostering an early interest in technical and problem-solving disciplines.<!--[cite: 1]--></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-12 text-gray-800">
+                <i class="fa-solid fa-rocket text-pastel-pink mr-3 animate-pulse inline-block"></i>Featured Projects
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                
+                <!-- Project 1 -->
+                <div class="glass-card tilt-element p-6 interactive cursor-pointer group flex flex-col h-full" onclick="openModal('modal-hand2hear')">
+                    <div class="pop-out flex flex-col h-full">
+                        <div class="h-48 bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-300 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                            <i class="fa-solid fa-hands-asl-interpreting text-7xl text-white group-hover:scale-125 group-hover:rotate-6 transition-transform duration-500"></i>
+                            <div class="absolute inset-0 bg-pink-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                                <span class="bg-white text-pink-500 font-bold px-6 py-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">View Details</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-800 mb-3">hand2hear<!--[cite: 1]--></h3>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-extrabold rounded-full border border-blue-200">Python</span>
+                            <span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-extrabold rounded-full border border-purple-200">OpenCV</span>
+                            <span class="px-3 py-1 bg-pink-100 text-pink-700 text-xs font-extrabold rounded-full border border-pink-200">ML</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-auto font-medium">A real-time computer vision pipeline converting hand gestures to speech.<!--[cite: 1]--></p>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass-card tilt-element p-6 interactive cursor-pointer group flex flex-col h-full" onclick="openModal('modal-uems')">
+                    <div class="pop-out flex flex-col h-full">
+                        <div class="h-48 bg-gradient-to-br from-blue-300 via-cyan-300 to-teal-300 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                            <i class="fa-solid fa-calendar-check text-7xl text-white group-hover:scale-125 group-hover:-rotate-6 transition-transform duration-500"></i>
+                            <div class="absolute inset-0 bg-blue-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                                <span class="bg-white text-blue-500 font-bold px-6 py-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">View Details</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-800 mb-3">Event System<!--[cite: 1]--></h3>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-extrabold rounded-full border border-gray-200">Web Dev</span>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-extrabold rounded-full border border-yellow-200">RBAC</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-extrabold rounded-full border border-green-200">HTML/CSS</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-auto font-medium">Web platform for university event scheduling and permission management.<!--[cite: 1]--></p>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="glass-card tilt-element p-6 interactive cursor-pointer group flex flex-col h-full" onclick="openModal('modal-weather')">
+                    <div class="pop-out flex flex-col h-full">
+                        <div class="h-48 bg-gradient-to-br from-yellow-300 via-orange-300 to-red-300 rounded-2xl mb-6 flex items-center justify-center overflow-hidden relative shadow-inner">
+                            <i class="fa-solid fa-cloud-sun-rain text-7xl text-white group-hover:scale-125 group-hover:rotate-6 transition-transform duration-500"></i>
+                            <div class="absolute inset-0 bg-orange-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                                <span class="bg-white text-orange-500 font-bold px-6 py-3 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">View Details</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-800 mb-3">myoneweatherapi<!--[cite: 1]--></h3>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full border border-orange-200">REST API</span>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-extrabold rounded-full border border-gray-200">Web Dev</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mt-auto font-medium">Weather application consuming a public REST API for real-time data.<!--[cite: 1]--></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section id="certifications" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-12 text-gray-800">
+                <i class="fa-solid fa-award text-pastel-yellow mr-3 inline-block"></i>Certifications & Awards
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.09 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-pink shadow-inner relative">
+                            <div class="absolute inset-0 bg-pink-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.09 AM.jpeg" alt="Web Designing" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 3]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">Web Designing</h3> <!--[cite: 3]-->
+                    </div>
+                </div>
+                
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.11 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-blue shadow-inner relative">
+                            <div class="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.11 AM.jpeg" alt="Web & App Dev" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 4]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">Web & App Dev w/ AI</h3> <!--[cite: 4]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.29 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-purple shadow-inner relative">
+                            <div class="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.29 AM.jpeg" alt="Android Dev" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 9]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">Android App Dev</h3> <!--[cite: 9]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.17 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-yellow shadow-inner relative">
+                            <div class="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.17 AM.jpeg" alt="Meme Making" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 6]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">1st Pos. Meme Making</h3> <!--[cite: 6]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.19 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-pink shadow-inner relative">
+                            <div class="absolute inset-0 bg-pink-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.19 AM.jpeg" alt="Poster Comp" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 7]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">1st Runner Up Poster</h3> <!--[cite: 7]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.26 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-blue shadow-inner relative">
+                            <div class="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.26 AM.jpeg" alt="Tech Fest" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 8]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">1st Pos. Tech Fest Art</h3> <!--[cite: 8]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.13 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-purple shadow-inner relative">
+                            <div class="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.13 AM.jpeg" alt="Animation" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 5]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">Animation Course</h3> <!--[cite: 5]-->
+                    </div>
+                </div>
+
+                <div class="glass-card tilt-element p-4 interactive cursor-pointer group" onclick="openImageModal('WhatsApp Image 2026-09-24 at 11.35.30 AM.jpeg')">
+                    <div class="pop-out">
+                        <div class="h-44 w-full overflow-hidden rounded-xl mb-4 border-2 border-pastel-yellow shadow-inner relative">
+                            <div class="absolute inset-0 bg-yellow-500/10 opacity-0 group-hover:opacity-100 z-10 transition-opacity flex items-center justify-center"><i class="fa-solid fa-expand text-white text-2xl drop-shadow-md"></i></div>
+                            <img src="WhatsApp Image 2026-09-24 at 11.35.30 AM.jpeg" onerror="this.src='WhatsApp Image 2026-09-24 at 11.35.29 AM.jpeg';" alt="DTP" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 relative z-0"> <!--[cite: 10]-->
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 text-center">Desktop Publishing</h3> <!--[cite: 10]-->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section (Technical & Soft Skills) -->
+        <section id="skills" class="py-20 reveal">
+            <h2 class="text-4xl font-black text-center mb-16 text-gray-800">
+                <i class="fa-solid fa-wand-magic-sparkles text-pastel-green mr-3 inline-block"></i>Skills Arsenal
+            </h2>
+            
+            <!-- Technical Skills -->
+            <h3 class="text-2xl font-bold text-center text-gray-700 mb-8 tracking-wide uppercase"><i class="fa-solid fa-laptop-code text-blue-400 mr-2"></i>Technical Skills</h3>
+            <div class="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto mb-16">
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-brands fa-python text-blue-500 text-xl"></i> Python</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-brain text-pink-500 text-xl"></i> Machine Learning</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-eye text-purple-500 text-xl"></i> Computer Vision</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-network-wired text-green-500 text-xl"></i> Deep Learning</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-camera text-gray-500 text-xl"></i> OpenCV</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-hand text-orange-500 text-xl"></i> MediaPipe</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-brands fa-html5 text-orange-600 text-xl"></i> HTML5 & CSS3</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-brands fa-android text-green-500 text-xl"></i> Android (Java)</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-database text-yellow-600 text-xl"></i> SQL / Pandas</span><!--[cite: 1]-->
+                </div>
+            </div>
+
+            <!-- Soft Skills -->
+            <h3 class="text-2xl font-bold text-center text-gray-700 mb-8 tracking-wide uppercase"><i class="fa-solid fa-users text-pink-400 mr-2"></i>Non-Technical Skills</h3>
+            <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2 border-pink-200">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-puzzle-piece text-pink-400"></i> Problem Solving</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2 border-purple-200">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-lightbulb text-purple-400"></i> Critical Thinking</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2 border-blue-200">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-handshake text-blue-400"></i> Team Collaboration</span><!--[cite: 1]-->
+                </div>
+                <div class="skill-bubble tilt-element px-6 py-3 rounded-full font-bold text-gray-700 flex items-center gap-2 border-indigo-200">
+                    <span class="pop-out flex items-center gap-2"><i class="fa-solid fa-pen-nib text-indigo-400"></i> UI/UX Design</span><!--[cite: 1]-->
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Connect Section -->
+        <section id="contact" class="py-24 reveal">
+            <h2 class="text-5xl font-black text-center mb-16 text-gray-800">
+                <i class="fa-regular fa-paper-plane text-pastel-pink mr-3 animate-bounce-slow inline-block"></i>Let's Connect!
+            </h2>
+            <div class="glass-card tilt-element p-10 max-w-4xl mx-auto bg-white/40 border-4 border-white shadow-[0_20px_50px_rgba(255,209,220,0.3)]">
+                <div class="pop-out flex flex-col md:flex-row justify-around items-center gap-8">
+                    
+                    <a href="mailto:keletekapfo@gmail.com" class="flex flex-col items-center gap-4 group interactive p-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-pink-300 to-purple-300 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:shadow-pink-300 transition-all duration-300">
+                            <i class="fa-solid fa-envelope text-3xl group-hover:animate-bounce"></i>
+                        </div>
+                        <span class="font-extrabold text-gray-700 text-lg group-hover:text-pink-500 transition-colors text-center break-all">keletekapfo@gmail.com<!--[cite: 1]--></span>
+                    </a>
+                    
+                    <div class="hidden md:block w-1 h-24 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+                    
+                    <a href="tel:+919366686983" class="flex flex-col items-center gap-4 group interactive p-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-300 to-teal-300 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:shadow-blue-300 transition-all duration-300">
+                            <i class="fa-solid fa-phone text-3xl group-hover:animate-bounce"></i>
+                        </div>
+                        <span class="font-extrabold text-gray-700 text-lg group-hover:text-blue-500 transition-colors">+91 9366686983<!--[cite: 1]--></span>
+                    </a>
+                    
+                    <div class="hidden md:block w-1 h-24 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+
+                    <div class="flex flex-col items-center gap-4 group interactive p-4 cursor-default">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:shadow-yellow-300 transition-all duration-300">
+                            <i class="fa-solid fa-location-dot text-3xl group-hover:animate-bounce"></i>
+                        </div>
+                        <span class="font-extrabold text-gray-700 text-lg group-hover:text-orange-500 transition-colors text-center">Chumoukedima,<br>Nagaland, India<!--[cite: 1]--></span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Project Modals -->
+    <!-- Modal: hand2hear -->
+    <div id="modal-hand2hear" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-md" onclick="closeModal('modal-hand2hear')"></div>
+        <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl border-4 border-pastel-pink scale-95 transition-transform duration-300 interactive" id="modal-content-hand2hear">
+            <button onclick="closeModal('modal-hand2hear')" class="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-pink-100 text-gray-600 hover:text-pink-600 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:rotate-90">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <div class="p-10">
+                <div class="w-20 h-20 bg-pink-100 text-pink-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-sm transform -rotate-3">
+                    <i class="fa-solid fa-hands-asl-interpreting"></i>
+                </div>
+                <h3 class="text-4xl font-black text-gray-800 mb-2">hand2hear<!--[cite: 1]--></h3>
+                <p class="text-pink-500 font-bold mb-8 text-lg">Major Project | Computer Vision & ML Pipeline<!--[cite: 1]--></p>
+                
+                <div class="space-y-4 text-gray-700 text-lg leading-relaxed">
+                    <p>Engineered a real-time computer vision and machine learning pipeline that converts hand gestures into English text and speech output, achieving live inference at 24+ FPS on standard hardware.<!--[cite: 1]--></p>
+                    <ul class="list-disc list-inside space-y-3 ml-2 mt-4 marker:text-pink-500">
+                        <li>Built with Python, OpenCV, and MediaPipe for 21-point hand landmark detection.<!--[cite: 1]--></li>
+                        <li>Trained a gesture classification model across 26 hand sign categories (A-Z alphabet) with 92% classification accuracy.<!--[cite: 1]--></li>
+                        <li>Processed and labelled a custom dataset of 2,600+ gesture images to train and validate the model.<!--[cite: 1]--></li>
+                        <li>Applied data augmentation to improve robustness across lighting conditions and hand orientations.<!--[cite: 1]--></li>
+                        <li>Applied accessibility-first design to enable real-time communication for individuals with hearing and speech impairments using only a standard webcam.<!--[cite: 1]--></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: UEMS -->
+    <div id="modal-uems" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-md" onclick="closeModal('modal-uems')"></div>
+        <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl border-4 border-pastel-blue scale-95 transition-transform duration-300 interactive" id="modal-content-uems">
+            <button onclick="closeModal('modal-uems')" class="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-600 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:rotate-90">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <div class="p-10">
+                <div class="w-20 h-20 bg-blue-100 text-blue-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-sm transform rotate-3">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3 class="text-4xl font-black text-gray-800 mb-2">University Event System<!--[cite: 1]--></h3>
+                <p class="text-blue-500 font-bold mb-8 text-lg">Mini Project | Web Development & RBAC<!--[cite: 1]--></p>
+                
+                <div class="space-y-4 text-gray-700 text-lg leading-relaxed">
+                    <p>Built a web-based platform for university event scheduling, academic calendar tracking, and multi-user permission management.<!--[cite: 1]--></p>
+                    <ul class="list-disc list-inside space-y-3 ml-2 mt-4 marker:text-blue-500">
+                        <li>Implemented Role-Based Access Control (RBAC).<!--[cite: 1]--></li>
+                        <li>Enabled administrators to approve events and manage attendee permissions independently.<!--[cite: 1]--></li>
+                        <li>Supports controlled access across different user roles within the university ecosystem.<!--[cite: 1]--></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Weather API -->
+    <div id="modal-weather" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-md" onclick="closeModal('modal-weather')"></div>
+        <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl border-4 border-pastel-yellow scale-95 transition-transform duration-300 interactive" id="modal-content-weather">
+            <button onclick="closeModal('modal-weather')" class="absolute top-4 right-4 w-12 h-12 bg-gray-100 hover:bg-yellow-100 text-gray-600 hover:text-yellow-600 rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:rotate-90">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <div class="p-10">
+                <div class="w-20 h-20 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-sm transform -rotate-3">
+                    <i class="fa-solid fa-cloud-sun-rain"></i>
+                </div>
+                <h3 class="text-4xl font-black text-gray-800 mb-2">myoneweatherapi<!--[cite: 1]--></h3>
+                <p class="text-yellow-600 font-bold mb-8 text-lg">Internship Project | REST API<!--[cite: 1]--></p>
+                
+                <div class="space-y-4 text-gray-700 text-lg leading-relaxed">
+                    <p>Developed a weather application consuming a public REST API to surface real-time environmental data.<!--[cite: 1]--></p>
+                    <ul class="list-disc list-inside space-y-3 ml-2 mt-4 marker:text-yellow-500">
+                        <li>Fetches and displays real-time temperature, humidity, and wind speed.<!--[cite: 1]--></li>
+                        <li>Designed to assist users with day-to-day planning based on accurate weather forecasts.<!--[cite: 1]--></li>
+                        <li>Focused on clean data parsing and responsive frontend display.<!--[cite: 1]--></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Image Modal for Full-Screen Certificates -->
+    <div id="image-modal" class="fixed inset-0 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md" onclick="closeImageModal()"></div>
+        <div class="relative z-10 max-w-5xl w-full h-[90vh] flex items-center justify-center interactive">
+            <button onclick="closeImageModal()" class="absolute top-2 right-2 md:-right-10 w-12 h-12 bg-white text-gray-800 hover:text-pink-600 hover:bg-pink-50 rounded-full flex items-center justify-center text-2xl z-20 shadow-lg transform transition-transform hover:rotate-90">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <img id="modal-image-src" src="" alt="Certificate View" class="max-w-full max-h-full object-contain rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-4 border-white transform scale-95 transition-transform duration-300">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/50 backdrop-blur-md border-t-2 border-white py-8 text-center text-gray-500 font-bold relative z-10">
+        <p>Designed with <i class="fa-solid fa-heart text-pink-400 animate-pulse mx-1"></i> by Kelete-ü Kapfo</p>
+        <p class="text-sm mt-2 font-normal">© 2026 AI/ML Software Developer. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Custom Magic Cursor & Tap Burst Sparkles Logic
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        const interactiveElements = document.querySelectorAll('.interactive, a, button, .cursor-pointer');
+        let mouseX = 0, mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+            cursorOutline.style.left = `${mouseX}px`;
+            cursorOutline.style.top = `${mouseY}px`;
+        });
+
+        // Add outward bursting Sparkles on Click
+        window.addEventListener('click', (e) => {
+            createSparkleBurst(e.clientX, e.clientY);
+        });
+
+        function createSparkleBurst(x, y) {
+            const numSparkles = 8;
+            for (let i = 0; i < numSparkles; i++) {
+                const sparkle = document.createElement('i');
+                sparkle.className = 'fa-solid fa-star sparkle';
+                
+                // Start exactly at the mouse click coordinates
+                sparkle.style.left = `${x}px`;
+                sparkle.style.top = `${y}px`;
+                
+                // Calculate explosion trajectories
+                const angle = Math.random() * Math.PI * 2; // Full 360 spread
+                const distance = 30 + Math.random() * 50;  // Travel distance between 30px to 80px
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                sparkle.style.setProperty('--tx', `${tx}px`);
+                sparkle.style.setProperty('--ty', `${ty}px`);
+                
+                const colors = ['#ffd1dc', '#a8d8ea', '#d5c6ff', '#ffefb5'];
+                sparkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Force animation to take exactly 1 second as requested
+                sparkle.style.animation = `sparkle-burst 1s cubic-bezier(0.25, 1, 0.5, 1) forwards`;
+                
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1000); // Remove exactly after 1 second
+            }
+        }
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                cursorOutline.style.backgroundColor = 'rgba(255, 209, 220, 0.3)';
+                cursorOutline.style.borderColor = 'transparent';
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorOutline.style.backgroundColor = 'transparent';
+                cursorOutline.style.borderColor = '#ffd1dc';
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+        });
+
+        // Custom Local Music Player Logic
+        const audio = document.getElementById('bg-music');
+        const playIcon = document.getElementById('music-icon');
+        const pulseAnim = document.getElementById('music-pulse');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+                playIcon.classList.add('pl-1'); 
+                pulseAnim.classList.remove('animate-ping');
+                pulseAnim.classList.add('opacity-0');
+            } else {
+                audio.play();
+                playIcon.classList.remove('fa-play', 'pl-1');
+                playIcon.classList.add('fa-pause');
+                pulseAnim.classList.remove('opacity-0');
+                pulseAnim.classList.add('animate-ping', 'opacity-30');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // 3D Card Tilt Logic
+        const tiltElements = document.querySelectorAll('.tilt-element');
+        tiltElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -8;
+                const rotateY = ((x - centerX) / centerX) * 8;
+                
+                el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        // Hero Typing Animation
+        const roles = ["Software Developer", "AI/ML Enthusiast", "Creative Coder", "Tech Explorer"];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingTextElement = document.getElementById("typing-text");
+
+        function typeEffect() {
+            const currentRole = roles[roleIndex];
+            if (isDeleting) {
+                typingTextElement.innerText = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingTextElement.innerText = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typingSpeed = isDeleting ? 40 : 100;
+
+            if (!isDeleting && charIndex === currentRole.length) {
+                typingSpeed = 2000; 
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                typingSpeed = 500; 
+            }
+
+            setTimeout(typeEffect, typingSpeed);
+        }
+
+        // Project Modal Logic
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            const content = document.getElementById(id.replace('modal', 'modal-content'));
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            const content = document.getElementById(id.replace('modal', 'modal-content'));
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Image Modal Logic
+        function openImageModal(src) {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-image-src');
+            img.src = src;
+            
+            setTimeout(() => { img.classList.remove('scale-95'); img.classList.add('scale-100'); }, 50);
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-image-src');
+            
+            img.classList.remove('scale-100');
+            img.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = 'auto';
+            
+            setTimeout(() => { img.src = ''; }, 300);
+        }
+
+        // Generate Floating Stars Background
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            for (let i = 0; i < 75; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 4 + 1; 
+                const posX = Math.random() * 100; 
+                const posY = Math.random() * 100; 
+                const delay = Math.random() * 5; 
+                const duration = Math.random() * 3 + 2; 
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}vw`;
+                star.style.top = `${posY}vh`;
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // Staggered Scroll Reveal Animation 
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('active');
+                        }, index * 50);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(reveal => observer.observe(reveal));
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2', 'shadow-md');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2', 'shadow-md');
+            }
+        });
+
+        // Initialize on load
+        window.onload = () => {
+            createStars();
+            initScrollReveal();
+            setTimeout(typeEffect, 1000); 
+        };
+    </script>
+</body>
+</html>
